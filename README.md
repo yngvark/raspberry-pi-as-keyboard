@@ -3,15 +3,23 @@ bios boot selector.
 
 Reason: I am tired of doing it manually.
 
+# Requirements
+
+You need to connect your Raspberry to your PC via an USB dongle like this:
+https://www.digitalimpuls.no/pimoroni/149925/rpi-zero-usb-dongle-kit-usb-tilkobling-av-pi-zero
+
 # Usage
 
 * Connect to your Raspberry Pi Zero (tested with version 2) using some other guide
-* 
+* Insert the Raspberry into your PC's USB port
 * On the raspberry, run
 
 ```sh
 python automate_boot_selection.py
 ```
+
+* Reboot your PC. The python program should recognize this and start sending keystrokes to automate boot
+selection.
 
 # It doesn't work
 

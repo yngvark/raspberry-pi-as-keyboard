@@ -9,7 +9,7 @@ from config import get_config
 # Strategy: 
 
 NULL_CHAR = chr(0)
-config = get_config(os.getenv("D"))
+config = get_config(os.getenv("T"))
 
 KEYB_F8 = 65
 KEYB_F12 = 69
@@ -81,9 +81,9 @@ def wait_until_pc_boots():
         last_three_lines.append(line)
 
         if len(last_three_lines) == 3:
-            line_3 = last_three_lines.pop()
-            line_2 = last_three_lines.pop()
-            line_1 = last_three_lines.pop()
+            line_3 = last_three_lines.pop().strip()
+            line_2 = last_three_lines.pop().strip()
+            line_1 = last_three_lines.pop().strip()
 
             print(line_1)
             print(line_2)
@@ -111,8 +111,8 @@ def get_into_boot_device_menu_selection():
 
 def do_boot_sequence_with_keys():
     try:
-        print("Sleeping 5 secs")
-        time.sleep(5)
+        print("Sleeping 2 secs")
+        time.sleep(2)
 
         get_into_boot_device_menu_selection()
 
@@ -127,8 +127,12 @@ def main():
     while True:
         print("Waiting for PC to boot...")
         wait_until_pc_boots()
+
         do_boot_sequence_with_keys()
         print("Boot sequence complete.")
+
+        print("Waiting, hopefully the bios menu is in place in 5 seconds")
+        time.sleep(5)
 
 if __name__ == "__main__":
     main()

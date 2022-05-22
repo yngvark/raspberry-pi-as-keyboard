@@ -68,7 +68,7 @@ ls /sys/class/udc > UDC
 * On the raspberry, run
 
 ```sh
-python ./automate_boot_selection/automate_boot_selection.py
+python ./boot-selector/main.py
 ```
 
 * Reboot your PC. The python program should recognize this and start sending keystrokes to automate boot
@@ -77,5 +77,30 @@ selection.
 # It doesn't work
 
 * Setup depends on possibly very specific strings in `/var/log/syslog` which works for me. Replace
-lines that look like `3f980000` in `automate_boot_selection.py` to whatever works for you.
+lines that look like `3f980000` in `main.py` to whatever works for you.
 * My PC uses F8 to launch boot device selector, change this if your PC use something else.
+
+# Developing
+
+Developing workflow:
+
+* Edit the Python files in this folder.
+* Test them
+
+```sh
+make test
+make fake-boot
+````
+
+* Set env var `SSHPASS` to the Raspberry's password.
+* Run
+
+```sh
+make upload
+````
+
+* Re-boot PC with Raspberry connected to see if the program works as intented.
+
+# ToDo
+
+https://github.com/metachris/RPIO

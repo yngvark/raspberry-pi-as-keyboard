@@ -3,6 +3,8 @@ import os
 import time
 import io
 
+from os import path
+
 from user_error import UserError
 from config import get_config
 
@@ -10,6 +12,9 @@ from config import get_config
 
 NULL_CHAR = chr(0)
 config = get_config(os.getenv("T"))
+
+USER_ABORT = 1
+PC_HAS_BOOTED = 2
 
 KEYB_F8 = 65
 KEYB_F12 = 69
@@ -66,6 +71,8 @@ def typeEnter():
 
 
 def wait_until_pc_boots():
+    print("Reading from file: " + config["syslog_file"])
+
     thefile = open(config["syslog_file"],"r")
     thefile.seek(0, io.SEEK_END)
 
@@ -73,31 +80,35 @@ def wait_until_pc_boots():
 
     while True:
         line = thefile.readline()
-        
+        #print("readline:")
+        #print(line)
+
         if not line:
+
+            if path.exists("stop_signal"):
+                print("Found file stop_signal, exiting program")
+                return USER_ABORT
+
             time.sleep(1)
             continue
         
+        print("SYSLOG: " + line.strip())
         last_three_lines.append(line)
 
         if len(last_three_lines) == 3:
-            line_3 = last_three_lines.pop().strip()
-            line_2 = last_three_lines.pop().strip()
-            line_1 = last_three_lines.pop().strip()
+            copy = last_three_lines[:]
+            #print("Checking last three lines: " + ', '.join(copy))
 
-            print(line_1)
-            print(line_2)
-            print(line_3)
+            last_three_lines.pop(0)
 
             if (
-                "dwc2 3f980000.usb: new device is full-speed" in line_1
-                and "dwc2 3f980000.usb: new device is high-speed" in line_2
-                and "dwc2 3f980000.usb: new address 1" in line_3
+                    "dwc2 3f980000.usb: new device is high-speed" in copy[0]
+                and "dwc2 3f980000.usb: new device is high-speed" in copy[1]
+                and "dwc2 3f980000.usb: new address 1" in copy[2]
                 ):
                 # PC has booted!
-                break
-
-
+                print("PC has booted!")
+                return PC_HAS_BOOTED
     
 def get_into_boot_device_menu_selection():
     count = 10
@@ -125,8 +136,12 @@ def do_boot_sequence_with_keys():
 
 def main():
     while True:
+        print("")
         print("Waiting for PC to boot...")
-        wait_until_pc_boots()
+        result = wait_until_pc_boots()
+        if result == USER_ABORT:
+            print("Exiting program")
+            break
 
         do_boot_sequence_with_keys()
         print("Boot sequence complete.")
@@ -136,14 +151,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# When booting PC with raspberry inserted
-#May 21 18:32:39 raspberrypi kernel: [ 8782.479267] dwc2 3f980000.usb: new device is full-speed
-#May 21 18:32:39 raspberrypi kernel: [ 8782.599108] dwc2 3f980000.usb: new device is high-speed
-#May 21 18:32:39 raspberrypi kernel: [ 8782.628944] dwc2 3f980000.usb: new address 1
-#
-#
-# When putting raspberry into PC
-#May 21 18:33:03 raspberrypi kernel: [ 8806.584807] dwc2 3f980000.usb: new device is high-speed
-#May 21 18:33:04 raspberrypi kernel: [ 8806.718327] dwc2 3f980000.usb: new device is high-speed
-#May 21 18:33:04 raspberrypi kernel: [ 8806.783694] dwc2 3f980000.usb: new address 1

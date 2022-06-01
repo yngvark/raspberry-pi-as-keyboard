@@ -88,7 +88,7 @@ def wait_until_pc_boots(last_boot_time_epoch):
         if not line:
             if path.exists("stop_signal"):
                 print("Found file stop_signal, exiting program")
-                return USER_ABORT
+                return USER_ABORT, 0
 
             time.sleep(1)
             continue

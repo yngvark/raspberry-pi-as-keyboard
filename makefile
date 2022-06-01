@@ -5,15 +5,15 @@ help: ## Print this menu
 run: ## Run
 	sudo ./run.sh
 
-restart:
+restart: ## Restart locally
 	@make stop
 	sleep 2
 	@make run
 
-make pi-restart:
-	sshpass -e ssh -t pi@192.168.0.139 "cd /home/pi/boot-selector && make stop && sleep 2 && sudo make run"
+pi-restart: ## Restart on Raspberry PI
+	ssh -t pi@192.168.0.139 "cd /home/pi/boot-selector && make stop && sleep 2 && sudo make run"
 
-stop:
+stop: ## Stop
 	sudo ./stop.sh
 	# echo Run: screen -r, and exit program. Then run exit.	
 
@@ -23,8 +23,8 @@ test: ## Run in test mode
 	T=1 ./main.py # T=Test mode
 
 upload: ## Upload script to Raspberry PI
-	sshpass -e ssh -t pi@192.168.0.139 "mkdir -p ~/boot-selector"
-	sshpass -e scp makefile stop.sh config.py main.py README.md run.sh user_error.py pi@192.168.0.139:/home/pi/boot-selector
+	ssh -t pi@192.168.0.139 "mkdir -p ~/boot-selector"
+	scp makefile stop.sh config.py main.py README.md run.sh user_error.py pi@192.168.0.139:/home/pi/boot-selector
 
 fake-boot: ## Trigger script to start by emulating
 	echo Gibberish starts >> syslog

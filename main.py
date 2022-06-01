@@ -78,7 +78,7 @@ def wait_until_pc_boots(last_boot_time_epoch):
     thefile = open(config["syslog_file"],"r")
     thefile.seek(0, io.SEEK_END)
 
-    last_2_or_3_lines = []
+    last_2_lines = []
 
     while True:
         line = thefile.readline()
@@ -101,10 +101,12 @@ def wait_until_pc_boots(last_boot_time_epoch):
             continue
 
         print("SYSLOG: " + line)
-        last_2_or_3_lines.append(line)
+        last_2_lines.append(line)
 
-        if len(last_2_or_3_lines) == 2:
-            copy = last_2_or_3_lines[:]
+        if len(last_2_lines) == 2:
+            copy = last_2_lines[:]
+            last_2_lines.pop(0)
+
             print("Checking last two lines")
 
             if (
@@ -115,19 +117,32 @@ def wait_until_pc_boots(last_boot_time_epoch):
                 print("PC has booted!")
                 return PC_HAS_BOOTED, get_epoch_time()
 
-        if len(last_2_or_3_lines) == 3:
-            copy = last_2_or_3_lines[:]
-            last_2_or_3_lines.pop(0)
-            print("Checking last three lines")
 
-            if (
-                    "dwc2 3f980000.usb: new device is high-speed" in copy[0]
-                and "dwc2 3f980000.usb: new device is high-speed" in copy[1]
-                and "dwc2 3f980000.usb: new address 1" in copy[2]
-                ):
-                # PC has booted!
-                print("PC has booted!")
-                return PC_HAS_BOOTED, get_epoch_time()
+#        if len(last_2_or_3_lines) == 2:
+#            copy = last_2_or_3_lines[:]
+#            print("Checking last two lines")
+#
+#            if (
+#                    "dwc2 3f980000.usb: new device is high-speed" in copy[0]
+#                and "dwc2 3f980000.usb: new address 1" in copy[1]
+#                ):
+#                # PC has booted!
+#                print("PC has booted!")
+#                return PC_HAS_BOOTED, get_epoch_time()
+#
+#        if len(last_2_or_3_lines) == 3:
+#            copy = last_2_or_3_lines[:]
+#            last_2_or_3_lines.pop(0)
+#            print("Checking last three lines")
+#
+#            if (
+#                   ("dwc2 3f980000.usb: new device is high-speed" in copy[0] or "dwc2 3f980000.usb: new device is full-speed" in copy[0])
+#                and "dwc2 3f980000.usb: new device is high-speed" in copy[1]
+#                and "dwc2 3f980000.usb: new address 1" in copy[2]
+#                ):
+#                # PC has booted!
+#                print("PC has booted!")
+#                return PC_HAS_BOOTED, get_epoch_time()
 
 def get_into_boot_device_menu_selection():
     count = 10

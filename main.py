@@ -2,7 +2,6 @@
 import os
 import time
 import io
-
 from os import path
 
 from user_error import UserError
@@ -70,13 +69,16 @@ def typeEnter():
     releaseKeys()
 
 
-def wait_until_pc_boots():
+def get_epoch_time():
+    return int(time.time())
+
+def wait_until_pc_boots(last_boot_time_epoch):
     print("Reading from file: " + config["syslog_file"])
 
     thefile = open(config["syslog_file"],"r")
     thefile.seek(0, io.SEEK_END)
 
-    last_three_lines = []
+    last_2_or_3_lines = []
 
     while True:
         line = thefile.readline()
@@ -84,7 +86,6 @@ def wait_until_pc_boots():
         #print(line)
 
         if not line:
-
             if path.exists("stop_signal"):
                 print("Found file stop_signal, exiting program")
                 return USER_ABORT
@@ -92,14 +93,32 @@ def wait_until_pc_boots():
             time.sleep(1)
             continue
         
-        print("SYSLOG: " + line.strip())
-        last_three_lines.append(line)
+        line = line.strip()
 
-        if len(last_three_lines) == 3:
-            copy = last_three_lines[:]
-            #print("Checking last three lines: " + ', '.join(copy))
+        # Probably 60 is better, but just to be sure eh
+        if get_epoch_time() - last_boot_time_epoch < 90:
+            print("SYSLOG (ignoring): " + line)
+            continue
 
-            last_three_lines.pop(0)
+        print("SYSLOG: " + line)
+        last_2_or_3_lines.append(line)
+
+        if len(last_2_or_3_lines) == 2:
+            copy = last_2_or_3_lines[:]
+            print("Checking last two lines")
+
+            if (
+                    "dwc2 3f980000.usb: new device is high-speed" in copy[0]
+                and "dwc2 3f980000.usb: new address 1" in copy[1]
+                ):
+                # PC has booted!
+                print("PC has booted!")
+                return PC_HAS_BOOTED, get_epoch_time()
+
+        if len(last_2_or_3_lines) == 3:
+            copy = last_2_or_3_lines[:]
+            last_2_or_3_lines.pop(0)
+            print("Checking last three lines")
 
             if (
                     "dwc2 3f980000.usb: new device is high-speed" in copy[0]
@@ -108,8 +127,8 @@ def wait_until_pc_boots():
                 ):
                 # PC has booted!
                 print("PC has booted!")
-                return PC_HAS_BOOTED
-    
+                return PC_HAS_BOOTED, get_epoch_time()
+
 def get_into_boot_device_menu_selection():
     count = 10
 
@@ -122,8 +141,8 @@ def get_into_boot_device_menu_selection():
 
 def do_boot_sequence_with_keys():
     try:
-        print("Sleeping 2 secs")
-        time.sleep(2)
+        #print("Sleeping 2 secs")
+        #time.sleep(2)
 
         get_into_boot_device_menu_selection()
 
@@ -135,10 +154,12 @@ def do_boot_sequence_with_keys():
         print(f"Error: {err}")
 
 def main():
+    last_epoc_time = 0
+
     while True:
         print("")
         print("Waiting for PC to boot...")
-        result = wait_until_pc_boots()
+        result, last_epoc_time = wait_until_pc_boots(last_epoc_time)
         if result == USER_ABORT:
             print("Exiting program")
             break

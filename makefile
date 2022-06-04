@@ -1,3 +1,6 @@
+HOST := "pi@192.168.0.139"
+PORT := "1111"
+
 f.PHONY: help
 help: ## Print this menu
 	@grep -E '^[a-zA-Z_0-9-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -26,7 +29,7 @@ pi-stop: ## Restart on Raspberry PI
 pi-log: ## Show log from the Pi
 	ssh -t pi@192.168.0.139 "tail -100 ~/boot-selector/log.txt"
 
-# ------------------------------
+# ------------------------------ DEVELOPING
 
 test: ## Run in test mode
 	touch syslog
@@ -34,8 +37,8 @@ test: ## Run in test mode
 	T=1 ./main.py # T=Test mode
 
 upload: ## Upload script to Raspberry PI
-	ssh -t pi@192.168.0.139 "mkdir -p ~/boot-selector"
-	scp makefile config.py main.py README.md user_error.py pi@192.168.0.139:/home/pi/boot-selector
+	ssh -t ${HOST} -p ${PORT} "mkdir -p ~/boot-selector"
+	scp -P ${PORT} makefile config.py main.py README.md user_error.py test_write.py ${HOST}:/home/pi/boot-selector
 
 fake-boot: ## Trigger script to start by emulating
 	echo Gibberish starts >> syslog
@@ -55,6 +58,8 @@ fake-boot-slow: ## Trigger script to start by emulating
 	sleep 1
 	echo Gibberish ends >> syslog
 
+# ------------------------------ INSTALLATION
+
 pi-install-as-service: upload ## Run program when Raspberry boots.
 	ssh -t pi@192.168.0.139 "mkdir -p /tmp/boot-selector-inst"
 	scp boot-selector.service pi@192.168.0.139:/tmp/boot-selector-inst/boot-selector.service
@@ -63,3 +68,14 @@ pi-install-as-service: upload ## Run program when Raspberry boots.
 	ssh -t pi@192.168.0.139 "sudo systemctl enable boot-selector"
 	ssh -t pi@192.168.0.139 "sudo systemctl start boot-selector"
 	ssh -t pi@192.168.0.139 "sudo systemctl status boot-selector"
+
+#pi-install-gui-on-boot:
+#	DIR="/home/pi/.config/lxsession/LXDE-pi"
+#	mkdir -p $DIR
+#	cd $DIR
+#	nano $DIR/autostart
+#
+#	# @lxterminal -e tail -f /home/pi/boot-selector/log.txt
+#
+#	DIR="/home/pi/.config/lxsession/LXDE-pi"
+#	rm $DIR/autostart

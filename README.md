@@ -70,7 +70,7 @@ This following is supposed to make it possible to connect to the Raspberry from 
 
 ```bash
 # This is the fix
-sed "s/rootwait/rootwait modules-load=dwc2,g_ether/" /boot/cmdline.txt
+sed "s/rootwait/rootwait modules-load=dwc2/" /boot/cmdline.txt
 
 touch /boot/ssh
 ```
@@ -88,6 +88,16 @@ Pasting instructions here in case they disappear:
 > 2. Finn rootwait kommandoen og legg til modules-load=dwc2,g_ether etter rootwait
 > 
 > 3. Opprett en fil med navn ssh i bootmappa: /boot/ssh
+
+### OLD STUFF - IGNORE
+
+
+```bash
+# This is the fix
+sed "s/rootwait/rootwait modules-load=dwc2,g_ether/" /boot/cmdline.txt
+
+touch /boot/ssh
+```
 
 ## Add SSH keys
 

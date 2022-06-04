@@ -109,42 +109,17 @@ def wait_until_pc_boots(last_boot_time_epoch):
             copy = last_2_lines[:]
             last_2_lines.pop(0)
 
-            #print("Checking last two lines")
+            match1 = "dwc2 3f980000.usb: new device is high-speed" in copy[0]
+            match2 = "dwc2 3f980000.usb: new address" in copy[1]
 
-            if (
-                    "dwc2 3f980000.usb: new device is high-speed" in copy[0]
-                and "dwc2 3f980000.usb: new address 1" in copy[1]
-                ):
+            #print("Checking last two lines:")
+            #print(f"    {copy[0]} - {match1}")
+            #print(f"    {copy[1]} - {match2}")
+
+            if (match1 and match2):
                 # PC has booted!
                 print("PC has booted!")
                 return PC_HAS_BOOTED, get_epoch_time()
-
-
-#        if len(last_2_or_3_lines) == 2:
-#            copy = last_2_or_3_lines[:]
-#            print("Checking last two lines")
-#
-#            if (
-#                    "dwc2 3f980000.usb: new device is high-speed" in copy[0]
-#                and "dwc2 3f980000.usb: new address 1" in copy[1]
-#                ):
-#                # PC has booted!
-#                print("PC has booted!")
-#                return PC_HAS_BOOTED, get_epoch_time()
-#
-#        if len(last_2_or_3_lines) == 3:
-#            copy = last_2_or_3_lines[:]
-#            last_2_or_3_lines.pop(0)
-#            print("Checking last three lines")
-#
-#            if (
-#                   ("dwc2 3f980000.usb: new device is high-speed" in copy[0] or "dwc2 3f980000.usb: new device is full-speed" in copy[0])
-#                and "dwc2 3f980000.usb: new device is high-speed" in copy[1]
-#                and "dwc2 3f980000.usb: new address 1" in copy[2]
-#                ):
-#                # PC has booted!
-#                print("PC has booted!")
-#                return PC_HAS_BOOTED, get_epoch_time()
 
 
 def run_cmd(cmd):
@@ -170,7 +145,7 @@ def send_alert():
 def get_into_boot_device_menu_selection():
     send_alert()
 
-    count = 5
+    count = 7
 
     for i in range(0, count):
         print(f"Sending key F8")
@@ -194,9 +169,6 @@ def do_boot_sequence_with_keys():
         print(f"Error: {err}")
 
 def main():
-    ifttt_key = os.getenv("IFTTT_KEY")
-    print(f"ifttt_key: {ifttt_key}")
-
     last_epoc_time = 0
 
     while True:

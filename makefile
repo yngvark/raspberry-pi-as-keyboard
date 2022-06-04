@@ -39,9 +39,13 @@ test: ## Run in test mode
 	rm -f stop_signal
 	T=1 ./main.py # T=Test mode
 
+pi-test:
+	ssh -t ${HOST} -p ${PORT} "logger '[ 8782.479267] dwc2 3f980000.usb: new device is high-speed' && logger '[ 8782.479267] dwc2 3f980000.usb: new address 5'"
+
 upload: ## Upload script to Raspberry PI
 	ssh -t ${HOST} -p ${PORT} "mkdir -p ~/boot-selector"
 	scp -P ${PORT} makefile config.py main.py README.md user_error.py test_write.py open-log-gui.sh ${HOST}:/home/pi/boot-selector
+	@make pi-restart
 
 fake-boot: ## Trigger script to start by emulating
 	echo Gibberish starts >> syslog

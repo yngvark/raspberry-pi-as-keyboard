@@ -194,6 +194,9 @@ def do_boot_sequence_with_keys():
         print(f"Error: {err}")
 
 def main():
+    ifttt_key = os.getenv("IFTTT_KEY")
+    print(f"ifttt_key: {ifttt_key}")
+
     last_epoc_time = 0
 
     while True:

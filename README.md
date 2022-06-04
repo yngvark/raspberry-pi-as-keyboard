@@ -144,13 +144,13 @@ make pi-install-as-service
 
 
 ```shell
-sudo nano /etc/profile
+sudo nano /lib/systemd/system/boot-selector.service
 ````
 
-Add the following line
+Edit the following line
 
 ```
-IFTTT_KEY=yourkey
+IFTTT_KEY=yourkey # replace yourkey with actual key
 ```
 
 Save file.

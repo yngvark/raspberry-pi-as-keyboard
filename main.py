@@ -145,7 +145,7 @@ def wait_until_pc_boots(last_boot_time_epoch):
 #                return PC_HAS_BOOTED, get_epoch_time()
 
 def get_into_boot_device_menu_selection():
-    count = 10
+    count = 5
 
     for i in range(0, count):
         print(f"Sending key F8")

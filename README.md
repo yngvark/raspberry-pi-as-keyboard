@@ -91,7 +91,7 @@ Pasting instructions here in case they disappear:
 
 ## Add SSH keys
 
-Thees are my keys, replace with your own:
+Thees are my keys, replace with your own. On Pi, run:
 
 ```
 mkdir -p ~/.ssh
@@ -105,11 +105,12 @@ EOF
 
 * Connect to your Raspberry Pi Zero (tested with version 2) using some other guide
 * Insert the Raspberry into your PC's USB port
-* On the raspberry, run
+* Edit makefile 
+* On your machine, run
 
-```sh
-python ./boot-selector/main.py
-```
+```shell
+make pi-install-as-service
+````
 
 * Reboot your PC. The python program should recognize this and start sending keystrokes to automate boot
 selection.

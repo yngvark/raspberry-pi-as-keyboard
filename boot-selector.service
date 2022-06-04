@@ -1,0 +1,13 @@
+[Unit]
+Description=Bootselector
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python3 -u /home/pi/boot-selector/main.py
+WorkingDirectory=/home/pi/boot-selector
+StandardOutput=append:/home/pi/boot-selector/log.txt
+StandardError=append:/home/pi/boot-selector/log.txt
+
+[Install]
+WantedBy=multi-user.target

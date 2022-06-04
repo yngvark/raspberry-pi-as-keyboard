@@ -6,28 +6,28 @@ help: ## Print this menu
 	@grep -E '^[a-zA-Z_0-9-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 run: ## Run
-	sudo service boot-selector start
-	sudo service status boot-selector
+	sudo systemctl boot-selector start
+	sudo systemctl status boot-selector
 
 pi-run: ## Restart on Raspberry PI
-	ssh -t pi@192.168.0.139 "cd /home/pi/boot-selector && make run"
+	ssh -t ${HOST} -p ${PORT} "cd /home/pi/boot-selector && make run"
 
 restart: ## Restart locally
-	sudo service restart boot-selector
-	sudo service status boot-selector
+	sudo systemctl restart boot-selector
+	sudo systemctl status boot-selector
 
 pi-restart: ## Restart on Raspberry PI
-	ssh -t pi@192.168.0.139 "cd /home/pi/boot-selector && make restart"
+	ssh -t ${HOST} -p ${PORT} "cd /home/pi/boot-selector && make restart"
 
 stop: ## Stop
 	sudo ./stop.sh
 	# echo Run: screen -r, and exit program. Then run exit.	
 
 pi-stop: ## Restart on Raspberry PI
-	ssh -t pi@192.168.0.139 "cd /home/pi/boot-selector && make stop"
+	ssh -t ${HOST} -p ${PORT} "cd /home/pi/boot-selector && make stop"
 
 pi-log: ## Show log from the Pi
-	ssh -t pi@192.168.0.139 "tail -100 ~/boot-selector/log.txt"
+	ssh -t ${HOST} -p ${PORT} "tail -100 ~/boot-selector/log.txt"
 
 # ------------------------------ DEVELOPING
 
@@ -61,13 +61,13 @@ fake-boot-slow: ## Trigger script to start by emulating
 # ------------------------------ INSTALLATION
 
 pi-install-as-service: upload ## Run program when Raspberry boots.
-	ssh -t pi@192.168.0.139 "mkdir -p /tmp/boot-selector-inst"
-	scp boot-selector.service pi@192.168.0.139:/tmp/boot-selector-inst/boot-selector.service
-	ssh -t pi@192.168.0.139 "sudo mv /tmp/boot-selector-inst/boot-selector.service /lib/systemd/system/boot-selector.service"
-	ssh -t pi@192.168.0.139 "sudo systemctl daemon-reload"
-	ssh -t pi@192.168.0.139 "sudo systemctl enable boot-selector"
-	ssh -t pi@192.168.0.139 "sudo systemctl start boot-selector"
-	ssh -t pi@192.168.0.139 "sudo systemctl status boot-selector"
+	ssh -t ${HOST} -p ${PORT} "mkdir -p /tmp/boot-selector-inst"
+	scp -P ${PORT} boot-selector.service ${HOST}:/tmp/boot-selector-inst/boot-selector.service
+	ssh -t ${HOST} -p ${PORT} "sudo mv /tmp/boot-selector-inst/boot-selector.service /lib/systemd/system/boot-selector.service"
+	ssh -t ${HOST} -p ${PORT} "sudo systemctl daemon-reload"
+	ssh -t ${HOST} -p ${PORT} "sudo systemctl enable boot-selector"
+	ssh -t ${HOST} -p ${PORT} "sudo systemctl start boot-selector"
+	ssh -t ${HOST} -p ${PORT} "sudo systemctl status boot-selector"
 
 #pi-install-gui-on-boot:
 #	DIR="/home/pi/.config/lxsession/LXDE-pi"

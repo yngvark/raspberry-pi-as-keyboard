@@ -3,6 +3,8 @@ import os
 import time
 import io
 from os import path
+import subprocess
+from subprocess import Popen, PIPE
 
 from user_error import UserError
 from config import get_config
@@ -107,7 +109,7 @@ def wait_until_pc_boots(last_boot_time_epoch):
             copy = last_2_lines[:]
             last_2_lines.pop(0)
 
-            print("Checking last two lines")
+            #print("Checking last two lines")
 
             if (
                     "dwc2 3f980000.usb: new device is high-speed" in copy[0]
@@ -144,7 +146,30 @@ def wait_until_pc_boots(last_boot_time_epoch):
 #                print("PC has booted!")
 #                return PC_HAS_BOOTED, get_epoch_time()
 
+
+def run_cmd(cmd):
+    print("Running cmd: " + ' '.join(cmd))
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    output, error = p.communicate()
+    if p.returncode != 0: 
+        print_err("ERROR, response from cmd (exit code %d): %s %s" % (p.returncode, output, error))
+
+    print(output)
+
+
+def send_alert():
+    ifttt_key = os.getenv("IFTTT_KEY")
+    if ifttt_key:
+        url = f"https://maker.ifttt.com/trigger/reminder/with/key/{ifttt_key}?value1=X&value2=F8started"
+        cmd = ["curl", "--silent", "-X", "POST", url]
+        run_cmd(cmd)
+    else:
+        print("IFTTT_KEY not present, not sending alert")
+
+
 def get_into_boot_device_menu_selection():
+    send_alert()
+
     count = 5
 
     for i in range(0, count):

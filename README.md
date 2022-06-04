@@ -68,7 +68,10 @@ cause I think.
 
 This following is supposed to make it possible to connect to the Raspberry from USB port only, but somehow it
 fixes the screen issue, but disables USB gadget mode (which we need for our program to work.). So only use
-this if you want to use the screen for debugging or whatnot.
+this if you want to use the screen for debugging or whatnot. 
+
+Or not, I am not actually sure anymore, somehow now both usb gadget mode works AND screen. Whatever, go debug
+yourself. Anyway:
 
 ```bash
 # This is the fix

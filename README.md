@@ -61,18 +61,20 @@ ln -s functions/hid.usb0 configs/c.1/
 ls /sys/class/udc > UDC
 ```
 
-## Re-enable screen support
+## Re-enable screen support - disable USB gadget mode
 
 The above config somehow causes the screen to go black after reboot. Specifically, the dtooverlay=dwc2 is the
 cause I think.
 
-This following is supposed to make it possible to connect to the Raspberry from USB port only, but somehow it fixes the screen issue:
+This following is supposed to make it possible to connect to the Raspberry from USB port only, but somehow it
+fixes the screen issue, but disables USB gadget mode (which we need for our program to work.). So only use
+this if you want to use the screen for debugging or whatnot.
 
 ```bash
 # This is the fix
-sed "s/rootwait/rootwait modules-load=dwc2/" /boot/cmdline.txt
-
+sudo sed -i "s/rootwait/rootwait modules-load=dwc2/" /boot/cmdline.txt
 touch /boot/ssh
+sudo reboot
 ```
 
 Source: https://www.digitalimpuls.no/pimoroni/149925/rpi-zero-usb-dongle-kit-usb-tilkobling-av-pi-zero
@@ -88,6 +90,15 @@ Pasting instructions here in case they disappear:
 > 2. Finn rootwait kommandoen og legg til modules-load=dwc2,g_ether etter rootwait
 > 
 > 3. Opprett en fil med navn ssh i bootmappa: /boot/ssh
+
+To re-enable USB-gadget mode and disable screen, run:
+```bash
+# This is the fix
+sudo sed -i "s/rootwait modules-load=dwc2/rootwait/" /boot/cmdline.txt
+sudo reboot
+```
+
+
 
 ### OLD STUFF - IGNORE
 
@@ -125,6 +136,21 @@ Run `pi-setup/secure-pi.sh`
 ```shell
 make pi-install-as-service
 ````
+
+* Optional, if you have set up IFTTTT integration:
+
+
+```shell
+sudo nano /etc/profile
+````
+
+Add the following line
+
+```
+IFTTT_KEY=yourkey
+```
+
+Save file.
 
 * Reboot your PC. The python program should recognize this and start sending keystrokes to automate boot
 selection.

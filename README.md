@@ -101,6 +101,10 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDfLUXkhg3AQPvSsKmXvzhXv2XcAVg8l8ChBW7MIqPT
 EOF
 ```
 
+## Secure the Pi
+
+Run `pi-setup/secure-pi.sh`
+
 # Usage
 
 * Connect to your Raspberry Pi Zero (tested with version 2) using some other guide

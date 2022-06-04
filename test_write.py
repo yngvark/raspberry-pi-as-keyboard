@@ -33,6 +33,10 @@ def do_send_bytes(bytez, attemptCount):
         do_send_bytes(bytez, attemptCount + 1)
 
 
+def releaseKeys():
+    send_bytes(NULL_CHAR*8)
+
+
 def type(text):
     # See page 53 at https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf
     for char in text:

@@ -29,6 +29,9 @@ pi-stop: ## Restart on Raspberry PI
 pi-log: ## Show log from the Pi
 	ssh -t ${HOST} -p ${PORT} "tail -100 ~/boot-selector/log.txt"
 
+gui: ## Show log in Pi GUI. Has to be run from the Pi, because it otherwise hangs.
+	sudo ./open-log-gui.sh log.txt &
+
 # ------------------------------ DEVELOPING
 
 test: ## Run in test mode
@@ -38,7 +41,7 @@ test: ## Run in test mode
 
 upload: ## Upload script to Raspberry PI
 	ssh -t ${HOST} -p ${PORT} "mkdir -p ~/boot-selector"
-	scp -P ${PORT} makefile config.py main.py README.md user_error.py test_write.py ${HOST}:/home/pi/boot-selector
+	scp -P ${PORT} makefile config.py main.py README.md user_error.py test_write.py open-log-gui.sh ${HOST}:/home/pi/boot-selector
 
 fake-boot: ## Trigger script to start by emulating
 	echo Gibberish starts >> syslog

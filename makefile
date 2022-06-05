@@ -35,12 +35,16 @@ pi-log: ## Show log from the Pi
 	ssh -t ${HOST} -p ${PORT} "sudo tail -100 ~/boot-selector/log.txt"
 
 gui: ## Show log in Pi GUI. Has to be run from the Pi, because it otherwise hangs.
+	echo "This currently doesn't work, because log.txt is owned by root."
 	sudo ./open-log-gui.sh log.txt &
 
-ssh:
+pi-gui: ##
+	ssh -t ${HOST} -p ${PORT} "cd ~/boot-selector && make gui"
+
+ssh: ##
 	ssh ${HOST} -p ${PORT}
 
-logrotate:
+logrotate: ## Force a log rotation
 	sudo logrotate -f /etc/logrotate.d/boot-selector
 
 # ------------------------------ DEVELOPING

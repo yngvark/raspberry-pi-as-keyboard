@@ -83,15 +83,15 @@ def wait_until_pc_boots(last_boot_time_epoch):
     last_2_lines = []
 
     while True:
+        if path.exists("stop_signal"):
+            print("Found file stop_signal, exiting program")
+            return USER_ABORT, 0
+
         line = thefile.readline()
         #print("readline:")
         #print(line)
 
-        if not line:
-            if path.exists("stop_signal"):
-                print("Found file stop_signal, exiting program")
-                return USER_ABORT, 0
-
+        if not line: # There is no new line in syslog
             time.sleep(1)
             continue
         

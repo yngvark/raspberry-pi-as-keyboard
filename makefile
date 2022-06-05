@@ -6,7 +6,7 @@ help: ## Print this menu
 	@grep -E '^[a-zA-Z_0-9-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 run: ## Run
-	sudo systemctl boot-selector start
+	sudo systemctl start boot-selector
 	sudo systemctl status boot-selector
 
 pi-run: ## Restart on Raspberry PI
@@ -20,17 +20,25 @@ pi-restart: ## Restart on Raspberry PI
 	ssh -t ${HOST} -p ${PORT} "cd /home/pi/boot-selector && make restart"
 
 stop: ## Stop
-	sudo ./stop.sh
-	# echo Run: screen -r, and exit program. Then run exit.	
+	sudo systemctl stop boot-selector
 
 pi-stop: ## Restart on Raspberry PI
 	ssh -t ${HOST} -p ${PORT} "cd /home/pi/boot-selector && make stop"
 
+status:
+	sudo systemctl status boot-selector
+
+pi-status:
+	ssh -t ${HOST} -p ${PORT} "cd /home/pi/boot-selector && make status"
+
 pi-log: ## Show log from the Pi
-	ssh -t ${HOST} -p ${PORT} "tail -100 ~/boot-selector/log.txt"
+	ssh -t ${HOST} -p ${PORT} "sudo tail -100 ~/boot-selector/log.txt"
 
 gui: ## Show log in Pi GUI. Has to be run from the Pi, because it otherwise hangs.
 	sudo ./open-log-gui.sh log.txt &
+
+logrotate:
+	sudo logrotate -f /etc/logrotate.d/boot-selector
 
 # ------------------------------ DEVELOPING
 
@@ -67,7 +75,11 @@ fake-boot-slow: ## Trigger script to start by emulating
 
 # ------------------------------ INSTALLATION
 
-pi-install-as-service: upload ## Run program when Raspberry boots.
+pi-install: upload ## Run program when Raspberry boots.
+	@make pi-install-service
+	@make pi-install-logrotate
+
+pi-install-service: ##
 	ssh -t ${HOST} -p ${PORT} "mkdir -p /tmp/boot-selector-inst"
 	scp -P ${PORT} boot-selector.service ${HOST}:/tmp/boot-selector-inst/boot-selector.service
 	ssh -t ${HOST} -p ${PORT} "sudo mv /tmp/boot-selector-inst/boot-selector.service /lib/systemd/system/boot-selector.service"
@@ -75,6 +87,12 @@ pi-install-as-service: upload ## Run program when Raspberry boots.
 	ssh -t ${HOST} -p ${PORT} "sudo systemctl enable boot-selector"
 	ssh -t ${HOST} -p ${PORT} "sudo systemctl start boot-selector"
 	ssh -t ${HOST} -p ${PORT} "sudo systemctl status boot-selector"
+
+pi-install-logrotate: ##
+	scp -P ${PORT} boot-selector.logrotate ${HOST}:/tmp/boot-selector-inst/boot-selector.logrotate
+	ssh -t ${HOST} -p ${PORT} "sudo mv /tmp/boot-selector-inst/boot-selector.logrotate /etc/logrotate.d/boot-selector"
+	ssh -t ${HOST} -p ${PORT} "sudo chown root:root /etc/logrotate.d/boot-selector"
+	ssh -t ${HOST} -p ${PORT} "sudo chmod 644 /etc/logrotate.d/boot-selector"
 
 #pi-install-gui-on-boot:
 #	DIR="/home/pi/.config/lxsession/LXDE-pi"

@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+sudo tail -f ~/boot-selector/log.txt

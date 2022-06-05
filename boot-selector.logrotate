@@ -1,0 +1,10 @@
+/home/pi/boot-selector/log*.txt {
+        rotate 7
+        weekly
+        missingok
+        notifempty
+        create 660
+        postrotate
+          sudo systemctl restart boot-selector
+        endscript
+}

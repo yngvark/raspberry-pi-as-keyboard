@@ -100,14 +100,3 @@ pi-install-logrotate: ##
 	ssh -t ${HOST} -p ${PORT} "sudo mv /tmp/boot-selector-inst/boot-selector.logrotate /etc/logrotate.d/boot-selector"
 	ssh -t ${HOST} -p ${PORT} "sudo chown root:root /etc/logrotate.d/boot-selector"
 	ssh -t ${HOST} -p ${PORT} "sudo chmod 644 /etc/logrotate.d/boot-selector"
-
-#pi-install-gui-on-boot:
-#	DIR="/home/pi/.config/lxsession/LXDE-pi"
-#	mkdir -p $DIR
-#	cd $DIR
-#	nano $DIR/autostart
-#
-#	# @lxterminal -e tail -f /home/pi/boot-selector/log.txt
-#
-#	DIR="/home/pi/.config/lxsession/LXDE-pi"
-#	rm $DIR/autostart

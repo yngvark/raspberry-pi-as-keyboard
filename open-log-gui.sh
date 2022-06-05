@@ -4,6 +4,8 @@
 
 # Based on https://raw.githubusercontent.com/aminb/usb-lock/master/onusbunplug.sh
 
+FILE_TO_TAIL=$1
+
 ENABLED=true
 
 getXuser() {
@@ -30,5 +32,5 @@ for x in /tmp/.X11-unix/*; do
     fi
 done
 
-su "$user" -c "lxterminal -e tail -f $1"
-
+#su "$user" -c "lxterminal -e tail -f /home/pi/boot-selector/log.txt"
+su "$user" -c "lxterminal -e tail -f $FILE_TO_TAIL"

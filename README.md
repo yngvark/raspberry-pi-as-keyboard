@@ -188,4 +188,5 @@ make upload
 
 # ToDo
 
-https://github.com/metachris/RPIO
+* Give access to correct user on boot: https://unix.stackexchange.com/questions/141255/give-a-specific-user-permissions-to-a-device-without-giving-access-to-other-user
+* Create a physical switch to select OS: https://github.com/metachris/RPIO

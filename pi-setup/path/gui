@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+sudo /home/pi/boot-selector/open-log-gui.sh /home/pi/boot-selector/log.txt &

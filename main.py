@@ -5,6 +5,7 @@ import io
 from os import path
 import subprocess
 from subprocess import Popen, PIPE
+from datetime import datetime
 
 from user_error import UserError
 from config import get_config
@@ -79,6 +80,8 @@ def wait_until_pc_boots(last_boot_time_epoch):
 
     thefile = open(config["syslog_file"],"r")
     thefile.seek(0, io.SEEK_END)
+
+    print(f"File position: {thefile.tell()}")
 
     last_2_lines = []
 
@@ -172,8 +175,10 @@ def main():
     last_epoc_time = 0
 
     while True:
+        time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
         print("")
-        print("Waiting for PC to boot...")
+        print(f"Waiting for PC to boot... Time is {time}")
         result, last_epoc_time = wait_until_pc_boots(last_epoc_time)
         if result == USER_ABORT:
             print("Exiting program")

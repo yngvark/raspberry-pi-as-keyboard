@@ -37,6 +37,9 @@ pi-log: ## Show log from the Pi
 gui: ## Show log in Pi GUI. Has to be run from the Pi, because it otherwise hangs.
 	sudo ./open-log-gui.sh log.txt &
 
+ssh:
+	ssh ${HOST} -p ${PORT}
+
 logrotate:
 	sudo logrotate -f /etc/logrotate.d/boot-selector
 

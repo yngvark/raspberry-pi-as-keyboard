@@ -32,18 +32,28 @@ pi-status:
 	ssh -t ${HOST} -p ${PORT} "cd /home/pi/boot-selector && make status"
 
 pi-log: ## Show log from the Pi
-	ssh -t ${HOST} -p ${PORT} "sudo tail -200 ~/boot-selector/log.txt" > /tmp/pi-log.txt
+	ssh -t ${HOST} -p ${PORT} "sudo cp /home/pi/boot-selector/log.txt /tmp/log.txt && sudo chown pi:pi /tmp/log.txt"
+	scp -P ${PORT} ${HOST}:/tmp/log.txt /tmp/pi-log.txt
 	less /tmp/pi-log.txt
 	rm /tmp/pi-log.txt
+
+pi-err: ## Show error log from the Pi
+	ssh -t ${HOST} -p ${PORT} "sudo cp /home/pi/boot-selector/log-err.txt /tmp/log-err.txt && sudo chown pi:pi /tmp/log-err.txt"
+	scp -P ${PORT} ${HOST}:/tmp/log-err.txt /tmp/pi-err.txt
+	less /tmp/pi-err.txt
+	rm /tmp/pi-err.txt
+
+pi-ls: ##
+	ssh -t ${HOST} -p ${PORT} "ls -lrtaH /home/pi/boot-selector --color"
 
 gui: ## Show log in Pi GUI. Has to be run from the Pi, because it otherwise hangs.
 	echo "This currently doesn't work, because log.txt is owned by root."
 	sudo ./open-log-gui.sh log.txt &
 
-pi-gui: ##
+pi-gui: ## Start a terminal tailing the log
 	ssh -t ${HOST} -p ${PORT} "cd ~/boot-selector && make gui"
 
-ssh: ##
+ssh: ## ssh into the Pi
 	ssh ${HOST} -p ${PORT}
 
 logrotate: ## Force a log rotation

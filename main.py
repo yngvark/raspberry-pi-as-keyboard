@@ -121,7 +121,8 @@ def wait_until_pc_boots(last_boot_time_epoch):
 
             if (match1 and match2):
                 # PC has booted!
-                print("PC has booted!")
+                nowtime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                print(f"PC has booted at {nowtime}")
                 return PC_HAS_BOOTED, get_epoch_time()
 
 
@@ -148,7 +149,7 @@ def send_alert():
 def get_into_boot_device_menu_selection():
     send_alert()
 
-    count = 7
+    count = 5
 
     for i in range(0, count):
         print(f"Sending key F8")
@@ -175,10 +176,10 @@ def main():
     last_epoc_time = 0
 
     while True:
-        time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        nowtime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         print("")
-        print(f"Waiting for PC to boot... Time is {time}")
+        print(f"Waiting for PC to boot... Time is {nowtime}")
         result, last_epoc_time = wait_until_pc_boots(last_epoc_time)
         if result == USER_ABORT:
             print("Exiting program")

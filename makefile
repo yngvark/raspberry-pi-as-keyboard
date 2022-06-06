@@ -32,7 +32,9 @@ pi-status:
 	ssh -t ${HOST} -p ${PORT} "cd /home/pi/boot-selector && make status"
 
 pi-log: ## Show log from the Pi
-	ssh -t ${HOST} -p ${PORT} "sudo tail -500 ~/boot-selector/log.txt" | less
+	ssh -t ${HOST} -p ${PORT} "sudo tail -200 ~/boot-selector/log.txt" > /tmp/pi-log.txt
+	less /tmp/pi-log.txt
+	rm /tmp/pi-log.txt
 
 gui: ## Show log in Pi GUI. Has to be run from the Pi, because it otherwise hangs.
 	echo "This currently doesn't work, because log.txt is owned by root."

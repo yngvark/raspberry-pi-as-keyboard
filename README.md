@@ -5,7 +5,7 @@ Reason: I am tired of doing it manually.
 
 Inspiration and thanks to: https://randomnerdtutorials.com/raspberry-pi-zero-usb-keyboard-hid/
 
-# Requirements / Raspberrypi setup
+# Requirements
 
 * You need to connect your Raspberry to your PC via an USB dongle like this:
 https://www.digitalimpuls.no/pimoroni/149925/rpi-zero-usb-dongle-kit-usb-tilkobling-av-pi-zero
@@ -101,8 +101,6 @@ sudo sed -i "s/rootwait modules-load=dwc2/rootwait/" /boot/cmdline.txt
 sudo reboot
 ```
 
-
-
 ### OLD STUFF - IGNORE
 
 
@@ -113,20 +111,9 @@ sed "s/rootwait/rootwait modules-load=dwc2,g_ether/" /boot/cmdline.txt
 touch /boot/ssh
 ```
 
-## Add SSH keys
+# Setup the PI
 
-Thees are my keys, replace with your own. On Pi, run:
-
-```
-mkdir -p ~/.ssh
-cat <<EOF > ~/.ssh/authorized_keys
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCrH6Xot46kOwPbNtov+B+DhHWzPihOVPQ325TOWLet8VJErgUfrX5W9KU7A5d/mpw6rOvTIXdDKIW4L4UIkNtY5eEbmia697MYrs6TwkEOGVeT/JjVh4r7my9SIPU60XVwLSh1NxS2wkebBP1sDNdytAGFBOCp+6EXLymvtp0wR+zUI6PXmJrWpd7u5QWE9mOlE/bU3ig/Zef6gZAcLKQd4kBL0wVoh8rYMqv/dCa9ldIn3e0STNCTB4xWV2CtAesYkc2g1pwOg80uOv6ObvXXaMR1bMjKgMRByrjpOOGEFVNGJXBJYVQXo1Akb9bBBm5/wD32VMt/v9nu3FHfLhldF74LpAvdkQP8PymGsBPhOdTHBNvNLmig7x1MG9h7NhHc2JkTbWyWk/5kli6m6GHipGiaC8z4Ahxuu01u3qPUsDg5nMDUyRilPH8IPERGy9kp69rC01PXh94tjnKnKCUiH65FUmfZyZ+G8vLmB8E9XPWJEummvyo9H+fJ7QatKhBlPMGQfYV2fz9NWtIPzUtso63moi2m4lRX7yUUVPmz7J+oKDfHdDMj1/dxI2yKHFvJw0yI4aIlcfSLyExZfog8yrXCvhuYNU4iB6YsDWgADvuVudMoJAVAHi795ePB7u8d8Ep08E6isJphq/7MjyTM8iD7Qlan2H9dvaguUREjQw== yngvar@yngvaritx
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDfLUXkhg3AQPvSsKmXvzhXv2XcAVg8l8ChBW7MIqPT3UoNTolKr0Rurgg6QqEtfNeEsYU63yEeqneY5cc940DL5uzEU8ZE3wm98cDZth+ZQRqGvldlw0IiEXS+rdVCueK0ZiNpHXxWsZQskOCE950nOLXKnf1VIJrX13vk49wiBxEy+DGISCxua2cgFyR9+mxNx2qKc684R65ZSzBPfzM0oxtDHQvOwxEUVEdvEXCtSax0Q9wMmTCr/gnLei7NWEzVXKYbxQC7vgZnmGEViTZwUN5jEpVyq0J37lOzUhs0WYatTrEd+1+HqjA721OtDcFn7dmi44xkC7D8zL4vENjYCr4k3Ik1Xs1uhgBHlURP2ZoFx8BG+SuCpZOK0KgTYG8VsV7epbpZSKtmMoZUQ2WVvhCPUSYSXI5/FzE3qsc860vQldeOqcpi1RPuww0AtYNhFUgHHVA4W/nQ83fJqElqt2PtNUc7CWQDqCXpIXKqOQTjW/6ut3tB64veSZyzTGOaplU6/oJNAEmXWzzqEO2jb2NTVxDen/Jx/n1r9/Z2abp/tKPbH20wl64oSnH7C6jVRWsub1mACY14bwv+Z7ys68WcR+Uyc+Y8+r7m3FkIkXLU1CN5aYfcBfoSLjaMXH4Fsb4Fq8AO1VpFtAtAZ0ddfUnt8o5v/QvOPJkOrKuh+Q== yk@DESKTOP-G3IMNC6
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDgY4UQ+ODfSPws6e/AhUosAyUfCSNi5jCfslf2GmmQeVDnrcaNKp0hlSUDbiKPm+JP6c2XJVC/Hy59MlcS58DuJqb6u7GDFtA8ilYa15HbjBouoXQF/MnPCUokJT0cmaH/cxBhak3yg25URCfxmC4YKOfHJc1Z8iLPFC4Jn5JMEumqkD8Sqoiv5VKn4WDF2Hvrf+HJ3l2D6A4V4Rtsb9R4EKY1Rps7jLEhc/mDjsC4KsDg7wXWou4a8/1LS+nGxOlk9SFVrkMKLcH9EbibDDvn9/G1QYjr9DSnRHZNqVsK9ke/F7COTOaAbq14RHjAKbjS4qszghy31BLyyNpSxgxuGH1/qTQCVHo1qHGmmetK7Bmzxn6D9YBZGwdnnjFX5sOy3CXYJaSzATos4GMsOhD69hVudOU6R3Hfy4tb96iZG7f8FKMHeSf3Z5RDt6D1TakW/NH5+pBcYnccqgr3nyIBsXR6kSzkJ/F/7kV7gHbulLGQE6dSWeFAyJZTLcSeLYpx8XLWfqnaJdWSJQgZ5mBFJleePqHOGMiq2Bik+gmR9qXjuw78E+utVE1DAiEcrlyn8Nhlm7EFU+PWHYup5C5RDRUvYu9lYVei8iU5Q0wZg4TgZtmuancFnthK4AtIbsNyvuHK2WCEAK8UZbDtQH2hHWOgoK84Y1LiivCWmixOdQ== yngvar@yngvarxd
-EOF
-```
-
-## Setup the PI
+From your own machine, run `pi-setup/setup.sh`
 
 Run `pi-setup/setup.sh`
 

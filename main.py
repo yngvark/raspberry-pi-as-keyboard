@@ -22,6 +22,8 @@ KEYB_F8 = 65
 KEYB_F12 = 69
 KEYB_ARROW_DOWN = 81
 
+COOLDOWN_TIME = 120
+
 if config["test_mode"] == True:
     print("Mode: TEST")
 else:
@@ -100,8 +102,7 @@ def wait_until_pc_boots(last_boot_time_epoch):
         
         line = line.strip()
 
-        # Probably 60 is better, but just to be sure eh
-        if get_epoch_time() - last_boot_time_epoch < 90:
+        if get_epoch_time() - last_boot_time_epoch < COOLDOWN_TIME:
             print("SYSLOG (ignoring): " + line)
             continue
 

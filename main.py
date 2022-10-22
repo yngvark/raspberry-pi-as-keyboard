@@ -22,7 +22,7 @@ KEYB_F8 = 65
 KEYB_F12 = 69
 KEYB_ARROW_DOWN = 81
 
-COOLDOWN_TIME = 120
+COOLDOWN_TIME = 300
 
 if config["test_mode"] == True:
     print("Mode: TEST")

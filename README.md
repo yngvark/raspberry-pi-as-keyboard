@@ -125,7 +125,7 @@ Run `pi-setup/setup.sh`
 * On your machine, run
 
 ```shell
-make pi-install-as-service
+make pi-install
 ````
 
 * Optional, if you have set up IFTTTT integration:

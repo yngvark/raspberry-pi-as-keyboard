@@ -132,7 +132,7 @@ def run_cmd(cmd):
     p = Popen(cmd, stdout=PIPE, stderr=PIPE)
     output, error = p.communicate()
     if p.returncode != 0: 
-        print_err("ERROR, response from cmd (exit code %d): %s %s" % (p.returncode, output, error))
+        print("ERROR, response from cmd (exit code %d): %s %s" % (p.returncode, output, error), file=sys.stderr)
 
     print(output)
 

@@ -48,6 +48,8 @@ sudo apt install -y unattended-upgrades
 sudo chown root:root /tmp/secure-pi/02periodic
 sudo mv /tmp/secure-pi/02periodic /etc/apt/apt.conf.d
 
+sudo unattended-upgrade -d -v --dry-run # Test
+
 # Fail2ban
 echo
 echo "Install fail2ban"

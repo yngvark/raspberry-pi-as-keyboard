@@ -6,7 +6,7 @@ After=multi-user.target
 Type=idle
 ExecStart=/usr/bin/python3 -u /home/pi/boot-selector/main.py
 WorkingDirectory=/home/pi/boot-selector
-StandardOutput=file:/home/pi/boot-selector/log.txt
+StandardOutput=file:/home/pi/boot-selector/log.txt+append
 StandardError=file:/home/pi/boot-selector/log-err.txt
 Environment=IFTTT_KEY=yourkey
 Restart=on-failure

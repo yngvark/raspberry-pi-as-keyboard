@@ -43,6 +43,12 @@ pi-err: ## Show error log from the Pi
 	less /tmp/pi-err.txt
 	rm /tmp/pi-err.txt
 
+tail:
+	tail -f log.txt
+
+pi-tail: ## Tail log from the Pi
+	ssh -t ${HOST} -p ${PORT} "cd /home/pi/boot-selector && make tail"
+
 pi-ls: ##
 	ssh -t ${HOST} -p ${PORT} "ls -lrtaH /home/pi/boot-selector --color"
 

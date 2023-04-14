@@ -147,7 +147,7 @@ def run_cmd(cmd):
     if p.returncode != 0: 
         print("ERROR, response from cmd (exit code %d): %s %s" % (p.returncode, output, error), file=sys.stderr)
 
-    log_print(output)
+    print(output)
 
 
 def send_alert():

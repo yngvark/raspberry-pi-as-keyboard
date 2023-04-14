@@ -38,7 +38,6 @@ pi-log: ## Show log from the Pi
 	rm /tmp/pi-log.txt
 
 pi-syslog: ## Show syslog from the Pi
-	ssh -t ${HOST} -p ${PORT} "sudo cp /home/pi/boot-selector/log.txt /tmp/log.txt && sudo chown pi:pi /tmp/log.txt"
 	scp -C -P ${PORT} ${HOST}:/var/log/syslog /tmp/pi-syslog.txt
 	less /tmp/pi-syslog.txt
 	rm /tmp/pi-syslog.txt
@@ -48,6 +47,15 @@ pi-err: ## Show error log from the Pi
 	scp -P ${PORT} ${HOST}:/tmp/log-err.txt /tmp/pi-err.txt
 	less /tmp/pi-err.txt
 	rm /tmp/pi-err.txt
+
+download-logs: ## Download all logs to /tmp
+	ssh -t ${HOST} -p ${PORT} "sudo cp /home/pi/boot-selector/log.txt /tmp/log.txt && sudo chown pi:pi /tmp/log.txt"
+	scp -P ${PORT} ${HOST}:/tmp/log.txt /tmp/pi-log.txt
+
+	scp -C -P ${PORT} ${HOST}:/var/log/syslog /tmp/pi-syslog.txt
+
+	ssh -t ${HOST} -p ${PORT} "sudo cp /home/pi/boot-selector/log-err.txt /tmp/log-err.txt && sudo chown pi:pi /tmp/log-err.txt"
+	scp -P ${PORT} ${HOST}:/tmp/log-err.txt /tmp/pi-err.txt
 
 tail:
 	tail -f log.txt

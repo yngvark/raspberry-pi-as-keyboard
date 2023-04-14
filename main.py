@@ -10,6 +10,8 @@ from datetime import datetime
 from user_error import UserError
 from config import get_config
 
+
+
 # Strategy: 
 
 NULL_CHAR = chr(0)
@@ -29,6 +31,17 @@ if config["test_mode"] == True:
 else:
     print("Mode: PRODUCTION")
 
+def log_print(text):
+    # Get the current time
+    now = datetime.now()
+
+    # Format the timestamp without milliseconds
+    formatted_timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
+
+    # Print the formatted timestamp
+    print(formatted_timestamp + " " + text)
+
+
 def send_bytes(bytez):
     if config["test_mode"]:
         print(bytez.encode())
@@ -44,10 +57,10 @@ def do_send_bytes(bytez, attemptCount):
         raise UserError(f"The raspberry pi is not connected to a USB port. Details: {err}")
     except BlockingIOError as err:
         if attemptCount == 20:
-            print(f"Gave up after {attemptCount} attempts because of blocking io: {err}")
+            log_print(f"Gave up after {attemptCount} attempts because of blocking io: {err}")
             return
 
-        print(f"Waiting and retrying because of blocking io: {err}")
+        log_print(f"Waiting and retrying because of blocking io: {err}")
         time.sleep(0.5)
         do_send_bytes(bytez, attemptCount + 1)
 
@@ -59,7 +72,7 @@ def type(text):
             releaseKeys()
         else: # Normal letter
             usage_id = ord(char) - 93
-            #print("USAGE ID: " + str(usage_id))
+            #log_print("USAGE ID: " + str(usage_id))
 
             send_bytes(NULL_CHAR*2+chr(usage_id)+NULL_CHAR*5)
             releaseKeys()
@@ -78,23 +91,23 @@ def get_epoch_time():
     return int(time.time())
 
 def wait_until_pc_boots(last_boot_time_epoch):
-    print("Reading from file: " + config["syslog_file"])
+    log_print("Reading from file: " + config["syslog_file"])
 
     thefile = open(config["syslog_file"],"r")
     thefile.seek(0, io.SEEK_END)
 
-    print(f"File position: {thefile.tell()}")
+    log_print(f"File position: {thefile.tell()}")
 
     last_2_lines = []
 
     while True:
         if path.exists("stop_signal"):
-            print("Found file stop_signal, exiting program")
+            log_print("Found file stop_signal, exiting program")
             return USER_ABORT, 0
 
         line = thefile.readline()
-        #print("readline:")
-        #print(line)
+        #log_print("readline:")
+        #log_print(line)
 
         if not line: # There is no new line in syslog
             time.sleep(1)
@@ -103,10 +116,10 @@ def wait_until_pc_boots(last_boot_time_epoch):
         line = line.strip()
 
         if get_epoch_time() - last_boot_time_epoch < COOLDOWN_TIME:
-            print("SYSLOG (ignoring): " + line)
+            log_print("SYSLOG (ignoring): " + line)
             continue
 
-        print("SYSLOG: " + line)
+        log_print("SYSLOG: " + line)
         last_2_lines.append(line)
 
         if len(last_2_lines) == 2:
@@ -116,25 +129,25 @@ def wait_until_pc_boots(last_boot_time_epoch):
             match1 = "dwc2 3f980000.usb: new device is high-speed" in copy[0]
             match2 = "dwc2 3f980000.usb: new address" in copy[1]
 
-            #print("Checking last two lines:")
-            #print(f"    {copy[0]} - {match1}")
-            #print(f"    {copy[1]} - {match2}")
+            #log_print("Checking last two lines:")
+            #log_print(f"    {copy[0]} - {match1}")
+            #log_print(f"    {copy[1]} - {match2}")
 
             if (match1 and match2):
                 # PC has booted!
                 nowtime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                print(f"PC has booted at {nowtime}")
+                log_print(f"PC has booted at {nowtime}")
                 return PC_HAS_BOOTED, get_epoch_time()
 
 
 def run_cmd(cmd):
-    print("Running cmd: " + ' '.join(cmd))
+    log_print("Running cmd: " + ' '.join(cmd))
     p = Popen(cmd, stdout=PIPE, stderr=PIPE)
     output, error = p.communicate()
     if p.returncode != 0: 
         print("ERROR, response from cmd (exit code %d): %s %s" % (p.returncode, output, error), file=sys.stderr)
 
-    print(output)
+    log_print(output)
 
 
 def send_alert():
@@ -144,7 +157,7 @@ def send_alert():
         cmd = ["curl", "--silent", "-X", "POST", url]
         run_cmd(cmd)
     else:
-        print("IFTTT_KEY not present, not sending alert")
+        log_print("IFTTT_KEY not present, not sending alert")
 
 
 def get_into_boot_device_menu_selection():
@@ -153,7 +166,7 @@ def get_into_boot_device_menu_selection():
     count = 5
 
     for i in range(0, count):
-        print(f"Sending key F8")
+        log_print(f"Sending key F8")
         send_bytes(NULL_CHAR*2+chr(KEYB_F8)+NULL_CHAR*5)
         releaseKeys()
         time.sleep(1)
@@ -161,7 +174,7 @@ def get_into_boot_device_menu_selection():
 
 def do_boot_sequence_with_keys():
     try:
-        #print("Sleeping 2 secs")
+        #log_print("Sleeping 2 secs")
         #time.sleep(2)
 
         get_into_boot_device_menu_selection()
@@ -171,7 +184,7 @@ def do_boot_sequence_with_keys():
         typeEnter()
 
     except UserError as err:
-        print(f"Error: {err}")
+        log_print(f"Error: {err}")
 
 def main():
     last_epoc_time = 0
@@ -179,17 +192,17 @@ def main():
     while True:
         nowtime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-        print("")
-        print(f"Waiting for PC to boot... Time is {nowtime}")
+        log_print("")
+        log_print(f"Waiting for PC to boot... Time is {nowtime}")
         result, last_epoc_time = wait_until_pc_boots(last_epoc_time)
         if result == USER_ABORT:
-            print("Exiting program")
+            log_print("Exiting program")
             break
 
         do_boot_sequence_with_keys()
-        print("Boot sequence complete.")
+        log_print("Boot sequence complete.")
 
-        print("Waiting, hopefully the bios menu is in place in 5 seconds")
+        log_print("Waiting, hopefully the bios menu is in place in 5 seconds")
         time.sleep(5)
 
 if __name__ == "__main__":

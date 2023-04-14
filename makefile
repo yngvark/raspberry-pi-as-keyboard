@@ -37,6 +37,12 @@ pi-log: ## Show log from the Pi
 	less /tmp/pi-log.txt
 	rm /tmp/pi-log.txt
 
+pi-syslog: ## Show syslog from the Pi
+	ssh -t ${HOST} -p ${PORT} "sudo cp /home/pi/boot-selector/log.txt /tmp/log.txt && sudo chown pi:pi /tmp/log.txt"
+	scp -C -P ${PORT} ${HOST}:/var/log/syslog /tmp/pi-syslog.txt
+	less /tmp/pi-syslog.txt
+	rm /tmp/pi-syslog.txt
+
 pi-err: ## Show error log from the Pi
 	ssh -t ${HOST} -p ${PORT} "sudo cp /home/pi/boot-selector/log-err.txt /tmp/log-err.txt && sudo chown pi:pi /tmp/log-err.txt"
 	scp -P ${PORT} ${HOST}:/tmp/log-err.txt /tmp/pi-err.txt
